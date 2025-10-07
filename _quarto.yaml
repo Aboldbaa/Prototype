@@ -13,6 +13,10 @@ website:
         text: Hello
       - href: about.qmd
         text: About
+      - href: Project.qmd
+        text: Project
+      - href: Code-Page.qmd
+        text: Code-Page
 
 format:
   html:

@@ -1,0 +1,158 @@
+---
+title: "Project"
+editor: visual
+---
+
+```{r}
+#| echo: false
+#| message: false
+#| warning: false
+library(tidyverse)
+library(ggplot2)
+library(scales)
+library(dplyr)
+library(tidyr)
+hw <- theme_gray()+ theme(
+  plot.title=element_text(hjust=0.5),
+  plot.subtitle=element_text(hjust=0.5),
+  plot.caption=element_text(hjust=-.5),
+
+  strip.text.y = element_blank(),
+  strip.background=element_rect(fill=rgb(.9,.95,1),
+    colour=gray(.5), linewidth =.2),
+
+  panel.border=element_rect(fill=FALSE,colour=gray(.70)),
+  panel.grid.minor.y = element_blank(),
+  panel.grid.minor.x = element_blank(),
+  panel.spacing.x = unit(0.10,"cm"),
+  panel.spacing.y = unit(0.05,"cm"),
+
+# axis.ticks.y= element_blank()
+  axis.ticks=element_blank(),
+  axis.text=element_text(colour="black"),
+  axis.text.y=element_text(margin=margin(0,3,0,3)),
+  axis.text.x=element_text(margin=margin(-1,0,3,0))
+)
+```
+
+## Bachelor degree recipients and their employment percentage in 2024
+
+These 2 graphs show the total number of bachelors degree recipients in 2024 broken down by age and gender.
+
+![Bachelor recipients of 2024](2024-degree-recipients-total%20number.png "Bachelor degree recipients in 2024")
+
+![% 0f Bachelor hired in 2024](2024-degree-recipients-percent%20hired.png "% of Bachelor degree recipients in 2024") \## This is the data set that these graphs were based on
+
+```{r}
+#| echo: false
+
+laborTable <- read.csv("Labor force status of 2024 degree recipients, 20 to 29 years old by selected characteristics.csv")
+laborTable
+```
+
+```{r}
+#| echo: false
+
+laborTable$Percent.employed <- as.numeric(gsub("%", "", laborTable$Percent.employed))
+laborTable$Total <- as.numeric(gsub(",", "", laborTable$Total))
+
+ggplot(laborTable) +
+  
+  geom_col(aes(x = reorder(Bachelor.s.degree, Total), y = Total), 
+           fill = "yellow") +
+  
+  
+  geom_col(aes(x = reorder(Bachelor.s.degree, Total), 
+               y = Total * Percent.employed / 100), 
+           fill = alpha("blue", 0.8)) +
+  
+  geom_text(aes(
+    x = Bachelor.s.degree, 
+    y = Total * Percent.employed / 100 + max(Total) * 0.015, 
+    label = paste0(Percent.employed, "%")
+  ),
+  color = "black", size = 4.2, fontface = "bold") +
+  
+  
+  coord_flip() +
+  
+  
+  labs(
+    title = "Labor Force Status of 2024 Degree Recipients (Ages 20–29)",
+    subtitle = "Yellow: Total Graduates  |  Blue: Percent Employed",
+    x = "Degree & Demographic Category",
+    y = "Number of Graduates",
+    caption = "Source: Bereau of labor statistics, 2024"
+  ) +
+  
+  
+  scale_y_continuous(labels = comma) +
+  hw
+
+```
+
+## The things I changed
+
+1.  I have combined both tables. Although looking at both graph side by side could be enough but this is a more visual representation
+2.  The percentage shows as a different color and as a number for clarity. I chose the colors to contrast but still show the number
+3.  I added legend to indicate color
+4.  I also ordered the graph from highest to lowest.
+
+## Largest occupations in manufacturing
+
+![Largest occupations in manufacturing](largest-occupations-in-m.png "largest occupations in manufacturing in 2024") ![Largest occupations in manufacturing salary mean](largest-occupations-in-m%20mean.png "largest occupations in manufacturing mean in 2024")
+
+```{r}
+#| echo: false
+
+manufacturing <- read.csv("Largest occupations in manufacturing, May 2024.csv")
+
+
+manufacturing$Employment <- as.numeric(gsub(",", "", manufacturing$Employment))
+manufacturing$Annual.mean.wage <- as.numeric(gsub("[$,]", "", manufacturing$Annual.mean.wage))
+
+p1 <- ggplot(manufacturing, aes(x = reorder(Occupation, Employment))) +
+  geom_col(aes(y = Employment / 1000), fill = "steelblue", alpha = 0.7) +
+  geom_line(aes(y = (`Annual.mean.wage` / 1000) * 10, group = 1), 
+            color = "firebrick", size = 1.2) +
+  geom_point(aes(y = (`Annual.mean.wage` / 1000) * 10), 
+             color = "firebrick", size = 2) +
+  geom_text(
+    aes(y = Employment / 1000, label = scales::comma(Employment)), 
+    hjust = 1.1,           
+    size = 3.5, 
+    color = "black"
+  ) +
+  scale_y_continuous(
+    name = "Employment (in thousands)",
+    sec.axis = sec_axis(~./10, name = "Annual Mean Wage (in $1,000s)")
+  ) +
+  coord_flip() +
+  labs(
+    title = "Employment and Mean Salary by Occupation (Manufacturing, 2024)",
+    x = "", y = ""
+  ) +
+  theme_minimal(base_size = 12) +
+  theme(
+    axis.title.y.right = element_text(color = "firebrick"),
+    axis.text.y = element_text(size = 9),
+    plot.title = element_text(hjust = 0.5, face = "bold")
+  )
+
+ggsave("p1.png", plot = p1, width = 10, height = 8, units = "in", dpi = 300)
+
+```
+
+![Employment and Mean Salary by occupation](p1.png "% of Bachelor degree recipients in 2024")
+
+## My changes
+
+I have done a similar approach to last time and combined both graphs. At first I considered adding the salary numbers on the bars but that seemed confusing to the viewer. So I added line and point graph to show the differences in salary. I considered making a double barchart but it seemed hard to convey since one was number of people and the other dollar amount. I have also added the number of people on bars since it was hard to estimate.
+
+::: {style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; max-width: 100%;"}
+<iframe 
+    src="https://www.youtube.com/embed/FJeGiSc0RTQ" 
+    frameborder="0" 
+    allowfullscreen
+    style="position: absolute; top:0; left: 0; width: 100%; height: 100%;"> </iframe>
+:::

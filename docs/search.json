@@ -61,5 +61,47 @@
     "title": "Hello",
     "section": "Running Code",
     "text": "Running Code\nWhen you click the Render button a document will be generated that includes both content and the output of embedded code. You can embed code like this:\n\n1 + 1\n\n[1] 2\n\n\nYou can add options to executable code like this\n\n\n[1] 4\n\n\nThe echo: false option disables the printing of code (only output is displayed)."
+  },
+  {
+    "objectID": "Project.html",
+    "href": "Project.html",
+    "title": "Project",
+    "section": "",
+    "text": "These 2 graphs show the total number of bachelors degree recipients in 2024 broken down by age and gender.\n\n\n\nBachelor recipients of 2024\n\n\n ## This is the data set that these graphs were based on\n\n\n       Bachelor.s.degree       Total Percent.employed\n1  Total, 20 to 29 years  1,248,000              69.6\n2                    Men    495,000              66.7\n3                  Women    753,000              71.5\n4         20 to 24 years  1,079,000              67.9\n5         25 to 29 years    168,000              80.3\n6     Enrolled in school    314,000              46.1\n7 Not enrolled in school    934,000              77.5"
+  },
+  {
+    "objectID": "Project.html#bachelor-degree-recipients-and-their-employment-percentage-in-2024",
+    "href": "Project.html#bachelor-degree-recipients-and-their-employment-percentage-in-2024",
+    "title": "Project",
+    "section": "",
+    "text": "These 2 graphs show the total number of bachelors degree recipients in 2024 broken down by age and gender.\n\n\n\nBachelor recipients of 2024\n\n\n ## This is the data set that these graphs were based on\n\n\n       Bachelor.s.degree       Total Percent.employed\n1  Total, 20 to 29 years  1,248,000              69.6\n2                    Men    495,000              66.7\n3                  Women    753,000              71.5\n4         20 to 24 years  1,079,000              67.9\n5         25 to 29 years    168,000              80.3\n6     Enrolled in school    314,000              46.1\n7 Not enrolled in school    934,000              77.5"
+  },
+  {
+    "objectID": "Project.html#the-things-i-changed",
+    "href": "Project.html#the-things-i-changed",
+    "title": "Project",
+    "section": "The things I changed",
+    "text": "The things I changed\n\nI have combined both tables. Although looking at both graph side by side could be enough but this is a more visual representation\nThe percentage shows as a different color and as a number for clarity. I chose the colors to contrast but still show the number\nI added legend to indicate color\nI also ordered the graph from highest to lowest."
+  },
+  {
+    "objectID": "Project.html#largest-occupations-in-manufacturing",
+    "href": "Project.html#largest-occupations-in-manufacturing",
+    "title": "Project",
+    "section": "Largest occupations in manufacturing",
+    "text": "Largest occupations in manufacturing\n \n\n\nWarning: Using `size` aesthetic for lines was deprecated in ggplot2 3.4.0.\nℹ Please use `linewidth` instead.\n\n\n\n\n\nEmployment and Mean Salary by occupation"
+  },
+  {
+    "objectID": "Project.html#my-changes",
+    "href": "Project.html#my-changes",
+    "title": "Project",
+    "section": "My changes",
+    "text": "My changes\nI have done a similar approach to last time and combined both graphs. At first I considered adding the salary numbers on the bars but that seemed confusing to the viewer. So I added line and point graph to show the differences in salary. I considered making a double barchart but it seemed hard to convey since one was number of people and the other dollar amount. I have also added the number of people on bars since it was hard to estimate."
+  },
+  {
+    "objectID": "Code-Page.html",
+    "href": "Code-Page.html",
+    "title": "Code Page",
+    "section": "",
+    "text": "library(tidyverse)\nlibrary(ggplot2)\nlibrary(scales)\nlibrary(dplyr)\nlibrary(tidyr)\nhw &lt;- theme_gray()+ theme(\n  plot.title=element_text(hjust=0.5),\n  plot.subtitle=element_text(hjust=0.5),\n  plot.caption=element_text(hjust=-.5),\n\n  strip.text.y = element_blank(),\n  strip.background=element_rect(fill=rgb(.9,.95,1),\n    colour=gray(.5), linewidth =.2),\n\n  panel.border=element_rect(fill=FALSE,colour=gray(.70)),\n  panel.grid.minor.y = element_blank(),\n  panel.grid.minor.x = element_blank(),\n  panel.spacing.x = unit(0.10,\"cm\"),\n  panel.spacing.y = unit(0.05,\"cm\"),\n\n# axis.ticks.y= element_blank()\n  axis.ticks=element_blank(),\n  axis.text=element_text(colour=\"black\"),\n  axis.text.y=element_text(margin=margin(0,3,0,3)),\n  axis.text.x=element_text(margin=margin(-1,0,3,0))\n)\n\n\nlaborTable &lt;- read.csv(\"Labor force status of 2024 degree recipients, 20 to 29 years old by selected characteristics.csv\")\nlaborTable\n\n\nlaborTable$Percent.employed &lt;- as.numeric(gsub(\"%\", \"\", laborTable$Percent.employed))\nlaborTable$Total &lt;- as.numeric(gsub(\",\", \"\", laborTable$Total))\n\nggplot(laborTable) +\n  # Blue bar for total graduates\n  geom_col(aes(x = reorder(Bachelor.s.degree, Total), y = Total), \n           fill = \"yellow\") +\n  \n  # Grey overlay showing % employed (scaled)\n  geom_col(aes(x = reorder(Bachelor.s.degree, Total), \n               y = Total * Percent.employed / 100), \n           fill = alpha(\"blue\", 0.8)) +\n  \n  # Add % text labels inside/above bars\n  geom_text(aes(\n    x = Bachelor.s.degree, \n    y = Total * Percent.employed / 100 + max(Total) * 0.015, \n    label = paste0(Percent.employed, \"%\")\n  ),\n  color = \"black\", size = 4.2, fontface = \"bold\") +\n  \n  # Flip coordinates → horizontal bars\n  coord_flip() +\n  \n  # Clean titles and axis labels\n  labs(\n    title = \"Labor Force Status of 2024 Degree Recipients (Ages 20–29)\",\n    subtitle = \"Yellow: Total Graduates  |  Blue: Percent Employed\",\n    x = \"Degree & Demographic Category\",\n    y = \"Number of Graduates\",\n    caption = \"Source: Bereau of labor statistics, 2024\"\n  ) +\n  \n  # Format y-axis with commas (1,000,000 → easier to read)\n  scale_y_continuous(labels = comma) +\n  hw\n\n\nmanufacturing &lt;- read.csv(\"Largest occupations in manufacturing, May 2024.csv\")\n\nmanufacturing$Employment &lt;- as.numeric(gsub(\",\", \"\", manufacturing$Employment))\nmanufacturing$Annual.mean.wage &lt;- as.numeric(gsub(\"[$,]\", \"\", manufacturing$Annual.mean.wage))\n\np1 &lt;- ggplot(manufacturing, aes(x = reorder(Occupation, Employment))) +\n  geom_col(aes(y = Employment / 1000), fill = \"steelblue\", alpha = 0.7) +\n  geom_line(aes(y = (`Annual.mean.wage` / 1000) * 10, group = 1), \n            color = \"firebrick\", size = 1.2) +\n  geom_point(aes(y = (`Annual.mean.wage` / 1000) * 10), \n             color = \"firebrick\", size = 2) +\n  geom_text(\n    aes(y = Employment / 1000, label = scales::comma(Employment)), \n    hjust = 1.1,           \n    size = 3.5, \n    color = \"black\"\n  ) +\n  scale_y_continuous(\n    name = \"Employment (in thousands)\",\n    sec.axis = sec_axis(~./10, name = \"Annual Mean Wage (in $1,000s)\")\n  ) +\n  coord_flip() +\n  labs(\n    title = \"Employment and Mean Salary by Occupation (Manufacturing, 2024)\",\n    x = \"\", y = \"\"\n  ) +\n  theme_minimal(base_size = 12) +\n  theme(\n    axis.title.y.right = element_text(color = \"firebrick\"),\n    axis.text.y = element_text(size = 9),\n    plot.title = element_text(hjust = 0.5, face = \"bold\")\n  )\np1\nggsave(\"p1.png\", plot = p1, width = 10, height = 8, units = \"in\", dpi = 300)"
   }
 ]

@@ -1,0 +1,129 @@
+---
+title: "Code Page"
+editor: visual
+---
+
+```{r}
+#| echo: true
+#| include: false
+
+library(tidyverse)
+library(ggplot2)
+library(scales)
+library(dplyr)
+library(tidyr)
+hw <- theme_gray()+ theme(
+  plot.title=element_text(hjust=0.5),
+  plot.subtitle=element_text(hjust=0.5),
+  plot.caption=element_text(hjust=-.5),
+
+  strip.text.y = element_blank(),
+  strip.background=element_rect(fill=rgb(.9,.95,1),
+    colour=gray(.5), linewidth =.2),
+
+  panel.border=element_rect(fill=FALSE,colour=gray(.70)),
+  panel.grid.minor.y = element_blank(),
+  panel.grid.minor.x = element_blank(),
+  panel.spacing.x = unit(0.10,"cm"),
+  panel.spacing.y = unit(0.05,"cm"),
+
+# axis.ticks.y= element_blank()
+  axis.ticks=element_blank(),
+  axis.text=element_text(colour="black"),
+  axis.text.y=element_text(margin=margin(0,3,0,3)),
+  axis.text.x=element_text(margin=margin(-1,0,3,0))
+)
+
+```
+
+```{r}
+#| echo: true
+#| include: false
+
+laborTable <- read.csv("Labor force status of 2024 degree recipients, 20 to 29 years old by selected characteristics.csv")
+laborTable
+
+```
+
+```{r}
+#| echo: true
+#| include: false
+
+laborTable$Percent.employed <- as.numeric(gsub("%", "", laborTable$Percent.employed))
+laborTable$Total <- as.numeric(gsub(",", "", laborTable$Total))
+
+ggplot(laborTable) +
+  # Blue bar for total graduates
+  geom_col(aes(x = reorder(Bachelor.s.degree, Total), y = Total), 
+           fill = "yellow") +
+  
+  # Grey overlay showing % employed (scaled)
+  geom_col(aes(x = reorder(Bachelor.s.degree, Total), 
+               y = Total * Percent.employed / 100), 
+           fill = alpha("blue", 0.8)) +
+  
+  # Add % text labels inside/above bars
+  geom_text(aes(
+    x = Bachelor.s.degree, 
+    y = Total * Percent.employed / 100 + max(Total) * 0.015, 
+    label = paste0(Percent.employed, "%")
+  ),
+  color = "black", size = 4.2, fontface = "bold") +
+  
+  # Flip coordinates → horizontal bars
+  coord_flip() +
+  
+  # Clean titles and axis labels
+  labs(
+    title = "Labor Force Status of 2024 Degree Recipients (Ages 20–29)",
+    subtitle = "Yellow: Total Graduates  |  Blue: Percent Employed",
+    x = "Degree & Demographic Category",
+    y = "Number of Graduates",
+    caption = "Source: Bereau of labor statistics, 2024"
+  ) +
+  
+  # Format y-axis with commas (1,000,000 → easier to read)
+  scale_y_continuous(labels = comma) +
+  hw
+```
+
+```{r}
+#| echo: true
+#| include: false
+
+manufacturing <- read.csv("Largest occupations in manufacturing, May 2024.csv")
+
+manufacturing$Employment <- as.numeric(gsub(",", "", manufacturing$Employment))
+manufacturing$Annual.mean.wage <- as.numeric(gsub("[$,]", "", manufacturing$Annual.mean.wage))
+
+p1 <- ggplot(manufacturing, aes(x = reorder(Occupation, Employment))) +
+  geom_col(aes(y = Employment / 1000), fill = "steelblue", alpha = 0.7) +
+  geom_line(aes(y = (`Annual.mean.wage` / 1000) * 10, group = 1), 
+            color = "firebrick", size = 1.2) +
+  geom_point(aes(y = (`Annual.mean.wage` / 1000) * 10), 
+             color = "firebrick", size = 2) +
+  geom_text(
+    aes(y = Employment / 1000, label = scales::comma(Employment)), 
+    hjust = 1.1,           
+    size = 3.5, 
+    color = "black"
+  ) +
+  scale_y_continuous(
+    name = "Employment (in thousands)",
+    sec.axis = sec_axis(~./10, name = "Annual Mean Wage (in $1,000s)")
+  ) +
+  coord_flip() +
+  labs(
+    title = "Employment and Mean Salary by Occupation (Manufacturing, 2024)",
+    x = "", y = ""
+  ) +
+  theme_minimal(base_size = 12) +
+  theme(
+    axis.title.y.right = element_text(color = "firebrick"),
+    axis.text.y = element_text(size = 9),
+    plot.title = element_text(hjust = 0.5, face = "bold")
+  )
+p1
+ggsave("p1.png", plot = p1, width = 10, height = 8, units = "in", dpi = 300)
+
+```
