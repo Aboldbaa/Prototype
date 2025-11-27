@@ -6,15 +6,11 @@ website:
   site-url: https://username.github.io/repo-name/
   repo-url: https://github.com/username/repo-name
   navbar: 
-    left: 
+    left:
       - href: index.qmd
-        text: Home
-      - href: hello.qmd
-        text: Hello
-      - href: about.qmd
-        text: About
-      - href: Project.qmd
-        text: Project
+        text: index.qmd
+      - href: Final.Project.qmd
+        text: Final.Project
       - href: Code-Page.qmd
         text: Code-Page
 

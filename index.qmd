@@ -1,0 +1,10 @@
+---
+title: "Home"
+editor: visual
+---
+
+## Hello
+
+![](Profile.png){fig-align="center" width="500"}
+
+I am Anand Boldbaatar a masters student at George Mason university, majoring In Applied data analytics. My undergrad was in IT(Database and programming)

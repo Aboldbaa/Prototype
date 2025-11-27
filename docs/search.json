@@ -2,9 +2,9 @@
   {
     "objectID": "index.html",
     "href": "index.html",
-    "title": "index",
+    "title": "Home",
     "section": "",
-    "text": "Quarto enables you to weave together content and executable code into a finished document. To learn more about Quarto see https://quarto.org."
+    "text": "I am Anand Boldbaatar a masters student at George Mason university, majoring In Applied data analytics. My undergrad was in IT(Database and programming)"
   },
   {
     "objectID": "index.html#quarto",
@@ -103,5 +103,26 @@
     "title": "Code Page",
     "section": "",
     "text": "library(tidyverse)\nlibrary(ggplot2)\nlibrary(scales)\nlibrary(dplyr)\nlibrary(tidyr)\nhw &lt;- theme_gray()+ theme(\n  plot.title=element_text(hjust=0.5),\n  plot.subtitle=element_text(hjust=0.5),\n  plot.caption=element_text(hjust=-.5),\n\n  strip.text.y = element_blank(),\n  strip.background=element_rect(fill=rgb(.9,.95,1),\n    colour=gray(.5), linewidth =.2),\n\n  panel.border=element_rect(fill=FALSE,colour=gray(.70)),\n  panel.grid.minor.y = element_blank(),\n  panel.grid.minor.x = element_blank(),\n  panel.spacing.x = unit(0.10,\"cm\"),\n  panel.spacing.y = unit(0.05,\"cm\"),\n\n# axis.ticks.y= element_blank()\n  axis.ticks=element_blank(),\n  axis.text=element_text(colour=\"black\"),\n  axis.text.y=element_text(margin=margin(0,3,0,3)),\n  axis.text.x=element_text(margin=margin(-1,0,3,0))\n)\n\n\nlaborTable &lt;- read.csv(\"Labor force status of 2024 degree recipients, 20 to 29 years old by selected characteristics.csv\")\nlaborTable\n\n\nlaborTable$Percent.employed &lt;- as.numeric(gsub(\"%\", \"\", laborTable$Percent.employed))\nlaborTable$Total &lt;- as.numeric(gsub(\",\", \"\", laborTable$Total))\n\nggplot(laborTable) +\n  \n  geom_col(aes(x = reorder(Bachelor.s.degree, Total), y = Total), \n           fill = \"yellow\") +\n  \n  \n  geom_col(aes(x = reorder(Bachelor.s.degree, Total), \n               y = Total * Percent.employed / 100), \n           fill = alpha(\"blue\", 0.8)) +\n  \n  \n  geom_text(aes(\n    x = Bachelor.s.degree, \n    y = Total * Percent.employed / 100 + max(Total) * 0.015, \n    label = paste0(Percent.employed, \"%\")\n  ),\n  color = \"black\", size = 4.2, fontface = \"bold\") +\n  \n  \n  coord_flip() +\n  \n  \n  labs(\n    title = \"Labor Force Status of 2024 Degree Recipients (Ages 20–29)\",\n    subtitle = \"Yellow: Total Graduates  |  Blue: Percent Employed\",\n    x = \"Degree & Demographic Category\",\n    y = \"Number of Graduates\",\n    caption = \"Source: Bereau of labor statistics, 2024\"\n  ) +\n  \n  \n  scale_y_continuous(labels = comma) +\n  hw\n\n\nmanufacturing &lt;- read.csv(\"Largest occupations in manufacturing, May 2024.csv\")\n\nmanufacturing$Employment &lt;- as.numeric(gsub(\",\", \"\", manufacturing$Employment))\nmanufacturing$Annual.mean.wage &lt;- as.numeric(gsub(\"[$,]\", \"\", manufacturing$Annual.mean.wage))\n\np1 &lt;- ggplot(manufacturing, aes(x = reorder(Occupation, Employment))) +\n  geom_col(aes(y = Employment / 1000), fill = \"steelblue\", alpha = 0.7) +\n  geom_line(aes(y = (`Annual.mean.wage` / 1000) * 10, group = 1), \n            color = \"firebrick\", size = 1.2) +\n  geom_point(aes(y = (`Annual.mean.wage` / 1000) * 10), \n             color = \"firebrick\", size = 2) +\n  geom_text(\n    aes(y = Employment / 1000, label = scales::comma(Employment)), \n    hjust = 1.1,           \n    size = 3.5, \n    color = \"black\"\n  ) +\n  scale_y_continuous(\n    name = \"Employment (in thousands)\",\n    sec.axis = sec_axis(~./10, name = \"Annual Mean Wage (in $1,000s)\")\n  ) +\n  coord_flip() +\n  labs(\n    title = \"Employment and Mean Salary by Occupation (Manufacturing, 2024)\",\n    x = \"\", y = \"\"\n  ) +\n  theme_minimal(base_size = 12) +\n  theme(\n    axis.title.y.right = element_text(color = \"firebrick\"),\n    axis.text.y = element_text(size = 9),\n    plot.title = element_text(hjust = 0.5, face = \"bold\")\n  )\np1\nggsave(\"p1.png\", plot = p1, width = 10, height = 8, units = \"in\", dpi = 300)"
+  },
+  {
+    "objectID": "index.html#hello",
+    "href": "index.html#hello",
+    "title": "Home",
+    "section": "",
+    "text": "I am Anand Boldbaatar a masters student at George Mason university, majoring In Applied data analytics. My undergrad was in IT(Database and programming)"
+  },
+  {
+    "objectID": "Final.Project.html",
+    "href": "Final.Project.html",
+    "title": "Final project",
+    "section": "",
+    "text": "Variables\nDescriptions\n\n\n\n\nEIN\nEmployer Identification number\n\n\nName\nPrimary name\n\n\nICO\nIn care of Name\n\n\nStreet\nStreet address\n\n\nCity\nCity\n\n\nState\nState\n\n\nZip\nZip Code\n\n\nGroup\nGroup Exemption Number\n\n\nSubsection\nSubsection code\n\n\nAffiliation\nAffiliation Code\n\n\nClassification\nClass code\n\n\nRuling\nRuling Date\n\n\nDeductibility\nDeductibility code\n\n\nFoundation\nFoundation Code\n\n\nActivity\nActivity Code\n\n\nOrganization\nOrganization code\n\n\nStatus\nEO status code\n\n\nTax_period\nTax period\n\n\nAsset_CD\nAsset code\n\n\nIncome_cd\nIncome code\n\n\nFiling_req_CD\nFiling requirement code\n\n\nPf_Filing_req_CD\nPF filing requirement code\n\n\nACCT_PD\nAccounting period\n\n\nAsset_AMT\nAsset amount\n\n\nIncome_AMT\nIncome amount\n\n\nRevenue_AMT\nrevenue amount\n\n\nNTEE_CD\nNational Taxonomy of exempt Entities code\n\n\nSort_Name\nSort name"
+  },
+  {
+    "objectID": "Final.Project.html#data-set",
+    "href": "Final.Project.html#data-set",
+    "title": "Final project",
+    "section": "",
+    "text": "Variables\nDescriptions\n\n\n\n\nEIN\nEmployer Identification number\n\n\nName\nPrimary name\n\n\nICO\nIn care of Name\n\n\nStreet\nStreet address\n\n\nCity\nCity\n\n\nState\nState\n\n\nZip\nZip Code\n\n\nGroup\nGroup Exemption Number\n\n\nSubsection\nSubsection code\n\n\nAffiliation\nAffiliation Code\n\n\nClassification\nClass code\n\n\nRuling\nRuling Date\n\n\nDeductibility\nDeductibility code\n\n\nFoundation\nFoundation Code\n\n\nActivity\nActivity Code\n\n\nOrganization\nOrganization code\n\n\nStatus\nEO status code\n\n\nTax_period\nTax period\n\n\nAsset_CD\nAsset code\n\n\nIncome_cd\nIncome code\n\n\nFiling_req_CD\nFiling requirement code\n\n\nPf_Filing_req_CD\nPF filing requirement code\n\n\nACCT_PD\nAccounting period\n\n\nAsset_AMT\nAsset amount\n\n\nIncome_AMT\nIncome amount\n\n\nRevenue_AMT\nrevenue amount\n\n\nNTEE_CD\nNational Taxonomy of exempt Entities code\n\n\nSort_Name\nSort name"
   }
 ]
