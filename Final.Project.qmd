@@ -51,11 +51,88 @@ library(tidyr)
 | NTEE_CD          | National Taxonomy of exempt Entities code |
 | Sort_Name        | Sort name                                 |
 
+```{r}
+
+mid.atlantic <- read.csv("mid-atlantic.csv", stringsAsFactors = FALSE, na.strings = c("", "NA"))
+num_cols <- c("ASSET_AMT", "INCOME_AMT", "REVENUE_AMT")
+
+mid.atlantic[num_cols] <- lapply(mid.atlantic[num_cols], function(x) as.numeric(x))
+mid.atlantic_clean <- mid.atlantic %>%
+  filter(!is.na(INCOME_AMT),
+         INCOME_AMT > 0,
+         !is.na(NTEE_CD),
+         NTEE_CD != "")
+mid.atlantic_clean <- mid.atlantic_clean %>% filter(REVENUE_AMT > 0)
+
+
+str(mid.atlantic_clean)
+summary(mid.atlantic_clean$INCOME_AMT)
+
+
+
+```
+
+This data set
+
 ## How does an organization’s NTEE classification (mission: health, environment) relate to total income?
+
+```{r}
+mid.atlantic_clean %>%
+  group_by(NTEE_CD) %>%
+  summarise(median_income = median(INCOME_AMT, na.rm = TRUE)) %>%
+  slice_max(order_by = median_income, n = 20) %>%   # top 20 groups
+  ggplot(aes(x = reorder(NTEE_CD, median_income), y = median_income)) +
+  geom_col() +
+  coord_flip() +
+  labs(title = "Top 20 NTEE Codes by Median INCOME_AMT",
+       x = "NTEE Code",
+       y = "Median Income") +
+  theme_minimal()
+
+
+
+```
+
+```{r}
+mid.atlantic_clean %>%
+  group_by(NTEE_CD) %>%
+  summarise(median_revenue = median(REVENUE_AMT, na.rm = TRUE))  %>%
+  slice_max(order_by = median_revenue, n = 20)%>%
+  ggplot(aes(x = reorder(NTEE_CD, median_revenue), y = median_revenue)) +
+  geom_col() +
+  coord_flip() +
+  labs(title = "Median REVENUE_AMT by NTEE Code",
+       x = "NTEE Code",
+       y = "Median Revenue") +
+  theme_minimal()
+
+```
 
 ## Does ZIP-code income reflect organization revenue in that region?
 
+SLR
+
+```{r}
+
+model <- lm(REVENUE_AMT ~ INCOME_AMT, data = mid.atlantic_clean)
+summary(model)
+
+model_log <- lm(log(REVENUE_AMT + 1) ~ log(INCOME_AMT + 1), 
+                data = mid.atlantic_clean)
+summary(model_log)
+```
+
+```{r}
+
+```
+
 ## What organizational characteristics predict high revenue nationally?
+
+mlr
+
+```{r}
+
+```
 
 ## Which mission types show higher asset-to-revenue ratios?
 

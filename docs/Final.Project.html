@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Final project – This is Stat 515</title>
+<title>Final project – My projects</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -19,6 +19,40 @@ ul.task-list li input[type="checkbox"] {
   width: 0.8em;
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
 </style>
 
@@ -78,7 +112,7 @@ ul.task-list li input[type="checkbox"] {
       <div class="navbar-container container-fluid">
       <div class="navbar-brand-container mx-auto">
     <a class="navbar-brand" href="./index.html">
-    <span class="navbar-title">This is Stat 515</span>
+    <span class="navbar-title">My projects</span>
     </a>
   </div>
             <div id="quarto-search" class="" title="Search"></div>
@@ -89,7 +123,7 @@ ul.task-list li input[type="checkbox"] {
             <ul class="navbar-nav navbar-nav-scroll me-auto">
   <li class="nav-item">
     <a class="nav-link" href="./index.html"> 
-<span class="menu-text">index.qmd</span></a>
+<span class="menu-text">index</span></a>
   </li>  
   <li class="nav-item">
     <a class="nav-link active" href="./Final.Project.html" aria-current="page"> 
@@ -262,15 +296,156 @@ ul.task-list li input[type="checkbox"] {
 </tr>
 </tbody>
 </table>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>mid.atlantic <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="st">"mid-atlantic.csv"</span>, <span class="at">stringsAsFactors =</span> <span class="cn">FALSE</span>, <span class="at">na.strings =</span> <span class="fu">c</span>(<span class="st">""</span>, <span class="st">"NA"</span>))</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>num_cols <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"ASSET_AMT"</span>, <span class="st">"INCOME_AMT"</span>, <span class="st">"REVENUE_AMT"</span>)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>mid.atlantic[num_cols] <span class="ot">&lt;-</span> <span class="fu">lapply</span>(mid.atlantic[num_cols], <span class="cf">function</span>(x) <span class="fu">as.numeric</span>(x))</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>mid.atlantic_clean <span class="ot">&lt;-</span> mid.atlantic <span class="sc">%&gt;%</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(INCOME_AMT),</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>         INCOME_AMT <span class="sc">&gt;</span> <span class="dv">0</span>,</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>         <span class="sc">!</span><span class="fu">is.na</span>(NTEE_CD),</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>         NTEE_CD <span class="sc">!=</span> <span class="st">""</span>)</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>mid.atlantic_clean <span class="ot">&lt;-</span> mid.atlantic_clean <span class="sc">%&gt;%</span> <span class="fu">filter</span>(REVENUE_AMT <span class="sc">&gt;</span> <span class="dv">0</span>)</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(mid.atlantic_clean)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>'data.frame':   144221 obs. of  28 variables:
+ $ EIN             : int  10274998 10319131 10356732 10372129 10437580 10442447 10466768 10492125 10547918 10549002 ...
+ $ NAME            : chr  "MOUNT ST JOSEPH" "SIGMA DELTA PI" "CARRIAGE MUSEUM OF AMERICA" "NORTH AMERICAN LAKE MANAGEMENT SOCIETY" ...
+ $ ICO             : chr  NA "% MARK P DEL MASTRO" NA NA ...
+ $ STREET          : chr  "20555 VICTOR PARKWAY" "3 BAINBRIDGE DR" "4075 IRON WORKS PARKWAY BLDG D" "PO BOX 5443" ...
+ $ CITY            : chr  "LIVONIA" "CHARLESTON" "LEXINGTON" "MADISON" ...
+ $ STATE           : chr  "MI" "SC" "KY" "WI" ...
+ $ ZIP             : chr  "48152-7031" "29407-4213" "40511-8483" "53705-0443" ...
+ $ GROUP           : int  928 0 0 0 0 0 0 0 0 0 ...
+ $ SUBSECTION      : int  3 3 3 3 6 3 3 3 3 3 ...
+ $ AFFILIATION     : int  9 3 3 3 3 3 3 3 3 3 ...
+ $ CLASSIFICATION  : int  1700 1000 1000 2000 3000 1000 2000 2000 1000 1200 ...
+ $ RULING          : int  194603 199906 197808 199006 198902 199901 199209 200004 200208 200206 ...
+ $ DEDUCTIBILITY   : int  1 1 1 1 2 1 1 1 1 1 ...
+ $ FOUNDATION      : int  12 16 15 16 0 16 11 16 16 11 ...
+ $ ACTIVITY        : int  150120000 59000000 149060000 351000000 200000000 998000000 30000000 0 0 0 ...
+ $ ORGANIZATION    : int  5 1 1 1 1 5 1 1 1 1 ...
+ $ STATUS          : int  1 1 1 1 1 1 1 1 1 1 ...
+ $ TAX_PERIOD      : int  202406 202408 202312 202412 202412 202412 202406 202412 202406 202306 ...
+ $ ASSET_CD        : int  7 6 5 5 4 4 8 4 3 4 ...
+ $ INCOME_CD       : int  2 4 4 5 4 4 6 4 6 4 ...
+ $ FILING_REQ_CD   : int  2 1 1 1 1 1 1 1 1 1 ...
+ $ PF_FILING_REQ_CD: int  0 0 0 0 0 0 0 0 0 0 ...
+ $ ACCT_PD         : int  6 8 12 12 12 12 6 12 6 6 ...
+ $ ASSET_AMT       : num  6917213 1594471 977192 888508 105997 ...
+ $ INCOME_AMT      : num  15000 156482 331031 675527 145556 ...
+ $ REVENUE_AMT     : num  11429 148133 66415 675527 94861 ...
+ $ NTEE_CD         : chr  "E910" "O20" "A540" "C033" ...
+ $ SORT_NAME       : chr  NA NA "AT THE KENTUCKY HORSE PARK" NA ...</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(mid.atlantic_clean<span class="sc">$</span>INCOME_AMT)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>     Min.   1st Qu.    Median      Mean   3rd Qu.      Max. 
+1.000e+00 8.479e+04 2.293e+05 1.045e+07 9.782e+05 2.892e+10 </code></pre>
+</div>
+</div>
+<p>This data set</p>
 </section>
 <section id="how-does-an-organizations-ntee-classification-mission-health-environment-relate-to-total-income" class="level2">
 <h2 class="anchored" data-anchor-id="how-does-an-organizations-ntee-classification-mission-health-environment-relate-to-total-income">How does an organization’s NTEE classification (mission: health, environment) relate to total income?</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>mid.atlantic_clean <span class="sc">%&gt;%</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(NTEE_CD) <span class="sc">%&gt;%</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">median_income =</span> <span class="fu">median</span>(INCOME_AMT, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">slice_max</span>(<span class="at">order_by =</span> median_income, <span class="at">n =</span> <span class="dv">20</span>) <span class="sc">%&gt;%</span>   <span class="co"># top 20 groups</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> <span class="fu">reorder</span>(NTEE_CD, median_income), <span class="at">y =</span> median_income)) <span class="sc">+</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_col</span>() <span class="sc">+</span></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_flip</span>() <span class="sc">+</span></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Top 20 NTEE Codes by Median INCOME_AMT"</span>,</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">"NTEE Code"</span>,</span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">"Median Income"</span>) <span class="sc">+</span></span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Final.Project_files/figure-html/unnamed-chunk-3-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>mid.atlantic_clean <span class="sc">%&gt;%</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(NTEE_CD) <span class="sc">%&gt;%</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">median_revenue =</span> <span class="fu">median</span>(REVENUE_AMT, <span class="at">na.rm =</span> <span class="cn">TRUE</span>))  <span class="sc">%&gt;%</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">slice_max</span>(<span class="at">order_by =</span> median_revenue, <span class="at">n =</span> <span class="dv">20</span>)<span class="sc">%&gt;%</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> <span class="fu">reorder</span>(NTEE_CD, median_revenue), <span class="at">y =</span> median_revenue)) <span class="sc">+</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_col</span>() <span class="sc">+</span></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_flip</span>() <span class="sc">+</span></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Median REVENUE_AMT by NTEE Code"</span>,</span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">"NTEE Code"</span>,</span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">"Median Revenue"</span>) <span class="sc">+</span></span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Final.Project_files/figure-html/unnamed-chunk-4-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
 </section>
 <section id="does-zip-code-income-reflect-organization-revenue-in-that-region" class="level2">
 <h2 class="anchored" data-anchor-id="does-zip-code-income-reflect-organization-revenue-in-that-region">Does ZIP-code income reflect organization revenue in that region?</h2>
+<p>SLR</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>model <span class="ot">&lt;-</span> <span class="fu">lm</span>(REVENUE_AMT <span class="sc">~</span> INCOME_AMT, <span class="at">data =</span> mid.atlantic_clean)</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(model)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+lm(formula = REVENUE_AMT ~ INCOME_AMT, data = mid.atlantic_clean)
+
+Residuals:
+       Min         1Q     Median         3Q        Max 
+-1.457e+10 -2.068e+06 -2.019e+06 -1.789e+06  6.920e+09 
+
+Coefficients:
+             Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept) 2.091e+06  1.984e+05   10.54   &lt;2e-16 ***
+INCOME_AMT  5.640e-01  9.324e-04  604.92   &lt;2e-16 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 75260000 on 144219 degrees of freedom
+Multiple R-squared:  0.7173,    Adjusted R-squared:  0.7173 
+F-statistic: 3.659e+05 on 1 and 144219 DF,  p-value: &lt; 2.2e-16</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>model_log <span class="ot">&lt;-</span> <span class="fu">lm</span>(<span class="fu">log</span>(REVENUE_AMT <span class="sc">+</span> <span class="dv">1</span>) <span class="sc">~</span> <span class="fu">log</span>(INCOME_AMT <span class="sc">+</span> <span class="dv">1</span>), </span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>                <span class="at">data =</span> mid.atlantic_clean)</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(model_log)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+lm(formula = log(REVENUE_AMT + 1) ~ log(INCOME_AMT + 1), data = mid.atlantic_clean)
+
+Residuals:
+     Min       1Q   Median       3Q      Max 
+-10.5249   0.0522   0.1120   0.1464   3.1222 
+
+Coefficients:
+                     Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept)         0.1625525  0.0061582    26.4   &lt;2e-16 ***
+log(INCOME_AMT + 1) 0.9762249  0.0004808  2030.3   &lt;2e-16 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 0.4012 on 144219 degrees of freedom
+Multiple R-squared:  0.9662,    Adjusted R-squared:  0.9662 
+F-statistic: 4.122e+06 on 1 and 144219 DF,  p-value: &lt; 2.2e-16</code></pre>
+</div>
+</div>
 </section>
 <section id="what-organizational-characteristics-predict-high-revenue-nationally" class="level2">
 <h2 class="anchored" data-anchor-id="what-organizational-characteristics-predict-high-revenue-nationally">What organizational characteristics predict high revenue nationally?</h2>
+<p>mlr</p>
 </section>
 <section id="which-mission-types-show-higher-asset-to-revenue-ratios" class="level2">
 <h2 class="anchored" data-anchor-id="which-mission-types-show-higher-asset-to-revenue-ratios">Which mission types show higher asset-to-revenue ratios?</h2>

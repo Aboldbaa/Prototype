@@ -2,13 +2,13 @@ project:
   type: website
   output-dir: docs
 website: 
-  title: "This is Stat 515"
+  title: "My projects"
   site-url: https://username.github.io/repo-name/
   repo-url: https://github.com/username/repo-name
   navbar: 
     left:
       - href: index.qmd
-        text: index.qmd
+        text: index
       - href: Final.Project.qmd
         text: Final.Project
       - href: Code-Page.qmd
