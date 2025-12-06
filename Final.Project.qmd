@@ -53,7 +53,7 @@ library(tidyr)
 
 ```{r}
 
-mid.atlantic <- read.csv("mid-atlantic.csv", stringsAsFactors = FALSE, na.strings = c("", "NA"))
+mid.atlantic <- read.csv("tax.2024.csv", stringsAsFactors = FALSE, na.strings = c("", "NA"))
 num_cols <- c("ASSET_AMT", "INCOME_AMT", "REVENUE_AMT")
 
 mid.atlantic[num_cols] <- lapply(mid.atlantic[num_cols], function(x) as.numeric(x))
@@ -63,18 +63,17 @@ mid.atlantic_clean <- mid.atlantic %>%
          !is.na(NTEE_CD),
          NTEE_CD != "")
 mid.atlantic_clean <- mid.atlantic_clean %>% filter(REVENUE_AMT > 0)
-
+tax2024<-mid.atlantic_clean
 
 str(mid.atlantic_clean)
-summary(mid.atlantic_clean$INCOME_AMT)
 
 
 
 ```
 
-This data set
+data set description
 
-## How does an organization’s NTEE classification (mission: health, environment) relate to total income?
+## How does an organization’s NTEE classification (mission: health, environment) relate to income?
 
 ```{r}
 mid.atlantic_clean %>%
@@ -108,22 +107,7 @@ mid.atlantic_clean %>%
 
 ```
 
-## Does ZIP-code income reflect organization revenue in that region?
-
-SLR
-
-```{r}
-
-model <- lm(REVENUE_AMT ~ INCOME_AMT, data = mid.atlantic_clean)
-summary(model)
-
-model_log <- lm(log(REVENUE_AMT + 1) ~ log(INCOME_AMT + 1), 
-                data = mid.atlantic_clean)
-summary(model_log)
-```
-
-```{r}
-
+```         
 ```
 
 ## What organizational characteristics predict high revenue nationally?
@@ -132,8 +116,50 @@ mlr
 
 ```{r}
 
+model_mlr <- lm(
+  log(REVENUE_AMT + 1) ~ 
+    ASSET_AMT + INCOME_AMT + ASSET_CD + INCOME_CD,
+  data = mid.atlantic_clean
+)
+
+summary(model_mlr)
+
 ```
 
-## Which mission types show higher asset-to-revenue ratios?
+### Which organizational characteristics most strongly predict whether a nonprofit is high-revenue?
 
-## Do differences in NTEE classification match regional concerns?
+```{r}
+tax2024$HighIncome <- factor(tax2024$HighIncome, levels = c("Low", "High"))
+
+# Create NTEE major group (first letter)
+tax2024$NTEE_major <- substr(tax2024$NTEE_CD, 1, 1)
+tax2024$log_assets <- log1p(tax2024$ASSET_AMT)
+
+tax2024$GroupStatus <- factor(tax2024$GroupStatus)
+tax2024$STATE <- factor(tax2024$STATE)
+model_org_category <- glm(
+  HighIncome ~ NTEE_major + GroupStatus + STATE +
+    ASSET_AMT + ACCT_PD,
+  data = tax2024,
+  family = binomial
+)
+summary(model_org_category)
+```
+
+```{r}
+set.seed(123)
+index <- sample(1:nrow(tax2024), 0.8*nrow(tax2024))
+train <- tax2024[index, ]
+test  <- tax2024[-index, ]
+
+model_test <- glm(
+  HighIncome ~ NTEE_major + GroupStatus + STATE +
+    ASSET_AMT + ACCT_PD,
+  data = train,
+  family = binomial
+)
+
+pred <- ifelse(predict(model_test, test, type = "response") > 0.5, "High", "Low")
+table(pred, test$HighIncome)
+mean(pred == test$HighIncome)
+```
