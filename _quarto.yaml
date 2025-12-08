@@ -9,8 +9,10 @@ website:
     left:
       - href: index.qmd
         text: index
-      - href: Final.Project.qmd
-        text: Final.Project
+      - href: Final Project.qmd
+        text: Final Project
+      - href: Data set.qmd
+        text: Data set
       - href: Code-Page.qmd
         text: Code-Page
 

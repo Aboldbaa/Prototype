@@ -89,5 +89,89 @@
     "title": "Home",
     "section": "",
     "text": "I am Anand Boldbaatar a masters student at George Mason university, majoring In Applied data analytics. My undergrad was in IT(Database and programming)"
+  },
+  {
+    "objectID": "Final Project.html",
+    "href": "Final Project.html",
+    "title": "Final project",
+    "section": "",
+    "text": "'data.frame':   267170 obs. of  31 variables:\n $ EIN             : int  10015091 10024645 10028850 10044660 10052260 10119375 10130427 10130865 10131390 10132610 ...\n $ NAME            : chr  \"HANOVER SOCCER CLUB INC\" \"BANGOR SYMPHONY ORCHESTRA\" \"BERWICK CEMETERY ASSOCIATION INC\" \"CHRISTIAN CIVIC LEAGUE OF MAINE INC\" ...\n $ ICO             : chr  NA \"% DAVID\" \"% RON VIGUE\" NA ...\n $ STREET          : chr  \"PO BOX 13\" \"PO BOX 1441\" \"PO BOX 227\" \"499 BROADWAY PMB 362\" ...\n $ CITY            : chr  \"CEDAR KNOLLS\" \"BANGOR\" \"BERWICK\" \"BANGOR\" ...\n $ STATE           : chr  \"NJ\" \"ME\" \"ME\" \"ME\" ...\n $ ZIP             : chr  \"07927-0013\" \"04402-1441\" \"03901-0227\" \"04401-3460\" ...\n $ GROUP           : int  0 0 0 0 0 0 0 0 0 0 ...\n $ SUBSECTION      : int  3 3 13 4 7 7 3 13 4 13 ...\n $ AFFILIATION     : int  3 3 3 3 3 3 3 3 3 3 ...\n $ CLASSIFICATION  : int  1000 1200 2000 1000 1000 1000 1000 1000 2000 1000 ...\n $ RULING          : int  201210 196806 201609 194310 194206 194408 195002 201604 200002 194808 ...\n $ DEDUCTIBILITY   : int  1 1 1 2 2 2 1 1 2 1 ...\n $ FOUNDATION      : int  16 15 0 0 0 0 12 0 0 0 ...\n $ ACTIVITY        : int  0 119059000 0 59029000 319916000 350281318 150000000 900000000 0 900901000 ...\n $ ORGANIZATION    : int  1 1 1 1 1 1 1 1 1 5 ...\n $ STATUS          : int  1 1 1 1 1 1 1 1 1 1 ...\n $ TAX_PERIOD      : int  202412 202406 202412 202412 202412 202410 202406 202404 202412 202412 ...\n $ ASSET_CD        : int  3 6 6 4 6 6 8 5 4 5 ...\n $ INCOME_CD       : int  4 6 4 4 6 6 9 3 4 3 ...\n $ FILING_REQ_CD   : int  1 1 1 1 1 1 1 1 1 1 ...\n $ PF_FILING_REQ_CD: int  0 0 0 0 0 0 0 0 0 0 ...\n $ ACCT_PD         : int  12 6 12 12 12 10 6 4 12 12 ...\n $ ASSET_AMT       : num  25052 4119081 3011195 215095 1864675 ...\n $ INCOME_AMT      : num  140598 1733352 330989 452770 2413996 ...\n $ REVENUE_AMT     : num  140598 1247353 269977 452770 1295279 ...\n $ NTEE_CD         : chr  \"N64\" \"A69Z\" \"Y50\" \"X20Z\" ...\n $ SORT_NAME       : chr  NA NA NA NA ...\n $ TaxDate         : chr  \"2024-12-01\" \"2024-06-01\" \"2024-12-01\" \"2024-12-01\" ...\n $ GroupStatus     : chr  \"Standalone\" \"Standalone\" \"Standalone\" \"Standalone\" ...\n $ HighIncome      : chr  \"Low\" \"High\" \"High\" \"High\" ..."
+  },
+  {
+    "objectID": "Final Project.html#introduction",
+    "href": "Final Project.html#introduction",
+    "title": "Final project",
+    "section": "Introduction",
+    "text": "Introduction"
+  },
+  {
+    "objectID": "Final Project.html#question-1",
+    "href": "Final Project.html#question-1",
+    "title": "Final project",
+    "section": "Question 1",
+    "text": "Question 1\n\nWhich organizational characteristics most strongly predict whether a nonprofit is high-revenue?\nTo determine how factors such as mission type (NTEE major group), organizational structure (group-affiliated vs standalone), geography (state), financial attributes (assets, revenue), and fiscal year-end month contribute to predicting whether a nonprofit has income above the median for the year 2024.\nLogistic regression\n\ntax2024$HighIncome &lt;- factor(tax2024$HighIncome, levels = c(\"Low\", \"High\"))\n\n# Create NTEE major group (first letter)\ntax2024$NTEE_major &lt;- substr(tax2024$NTEE_CD, 1, 1)\n\n\ntax2024$GroupStatus &lt;- factor(tax2024$GroupStatus)\ntax2024$STATE &lt;- factor(tax2024$STATE)\nmodel_org_category &lt;- glm(\n  HighIncome ~ NTEE_major + GroupStatus + STATE + ACCT_PD,\n  data = tax2024,\n  family = binomial\n)\nsummary(model_org_category)\n\n\nCall:\nglm(formula = HighIncome ~ NTEE_major + GroupStatus + STATE + \n    ACCT_PD, family = binomial, data = tax2024)\n\nCoefficients:\n                       Estimate Std. Error  z value Pr(&gt;|z|)    \n(Intercept)            1.698514   1.027279    1.653 0.098247 .  \nNTEE_majorA           -0.053290   1.024595   -0.052 0.958520    \nNTEE_majorB            0.099998   1.024558    0.098 0.922249    \nNTEE_majorc            8.160658  30.969892    0.264 0.792163    \nNTEE_majorC            0.367475   1.024854    0.359 0.719922    \nNTEE_majorD            0.020443   1.024764    0.020 0.984084    \nNTEE_majorE            1.000111   1.024700    0.976 0.329062    \nNTEE_majorF            0.617260   1.024860    0.602 0.546983    \nNTEE_majorG            0.324520   1.025137    0.317 0.751576    \nNTEE_majorH            0.354645   1.025822    0.346 0.729555    \nNTEE_majorI            0.552944   1.025089    0.539 0.589604    \nNTEE_majorJ            0.666095   1.025089    0.650 0.515826    \nNTEE_majorK            0.312877   1.024979    0.305 0.760174    \nNTEE_majorL            0.691850   1.024727    0.675 0.499577    \nNTEE_majorM            0.104385   1.024887    0.102 0.918876    \nNTEE_majorN           -0.300268   1.024618   -0.293 0.769481    \nNTEE_majorO            0.073617   1.024769    0.072 0.942731    \nNTEE_majorP            0.563908   1.024576    0.550 0.582058    \nNTEE_majorQ            0.349637   1.024881    0.341 0.732992    \nNTEE_majorR            0.534968   1.025501    0.522 0.601903    \nNTEE_majorS            0.122346   1.024641    0.119 0.904956    \nNTEE_majorT            0.115408   1.024699    0.113 0.910327    \nNTEE_majorU            0.457126   1.026155    0.445 0.655976    \nNTEE_majorV            0.652274   1.030167    0.633 0.526621    \nNTEE_majorW            0.006975   1.024966    0.007 0.994570    \nNTEE_majorX           -0.118545   1.024648   -0.116 0.907895    \nNTEE_majorY            0.353860   1.025188    0.345 0.729970    \nNTEE_majorZ            0.299668   1.025524    0.292 0.770126    \nGroupStatusStandalone  0.277030   0.026441   10.477  &lt; 2e-16 ***\nSTATEAL               -0.126265   0.078679   -1.605 0.108535    \nSTATEAR               -0.294125   0.085056   -3.458 0.000544 ***\nSTATEAZ               -0.069254   0.076850   -0.901 0.367502    \nSTATECA               -0.211433   0.070642   -2.993 0.002762 ** \nSTATECO                0.077425   0.074581    1.038 0.299208    \nSTATECT               -0.129484   0.077952   -1.661 0.096701 .  \nSTATEDE               -0.073246   0.094687   -0.774 0.439192    \nSTATEFL               -0.205421   0.071798   -2.861 0.004222 ** \nSTATEGA               -0.245279   0.074006   -3.314 0.000919 ***\nSTATEHI               -0.116941   0.091568   -1.277 0.201570    \nSTATEIA               -0.158865   0.078393   -2.027 0.042713 *  \nSTATEID               -0.203641   0.089975   -2.263 0.023617 *  \nSTATEIL               -0.220001   0.072625   -3.029 0.002451 ** \nSTATEIN               -0.050918   0.075389   -0.675 0.499424    \nSTATEKS               -0.162254   0.082242   -1.973 0.048508 *  \nSTATEKY               -0.200572   0.079877   -2.511 0.012038 *  \nSTATELA               -0.175581   0.080300   -2.187 0.028775 *  \nSTATEMA               -0.449826   0.073031   -6.159 7.30e-10 ***\nSTATEMD               -0.224591   0.075146   -2.989 0.002801 ** \nSTATEME                0.082223   0.086559    0.950 0.342157    \nSTATEMI               -0.114116   0.073810   -1.546 0.122089    \nSTATEMN               -0.026684   0.074478   -0.358 0.720135    \nSTATEMO               -0.091235   0.076134   -1.198 0.230785    \nSTATEMS               -0.304061   0.086378   -3.520 0.000431 ***\nSTATEMT               -0.115683   0.087705   -1.319 0.187169    \nSTATENC               -0.050921   0.073353   -0.694 0.487566    \nSTATEND                0.145440   0.098300    1.480 0.138992    \nSTATENE               -0.074224   0.084412   -0.879 0.379232    \nSTATENH               -0.273462   0.085757   -3.189 0.001429 ** \nSTATENJ               -0.519218   0.073874   -7.028 2.09e-12 ***\nSTATENM               -0.117806   0.087671   -1.344 0.179035    \nSTATENV               -0.253613   0.087292   -2.905 0.003668 ** \nSTATENY               -0.188654   0.071323   -2.645 0.008168 ** \nSTATEOH               -0.226585   0.072976   -3.105 0.001903 ** \nSTATEOK               -0.236391   0.081290   -2.908 0.003637 ** \nSTATEOR               -0.216223   0.075946   -2.847 0.004412 ** \nSTATEPA               -0.089874   0.072221   -1.244 0.213340    \nSTATERI               -0.113965   0.093907   -1.214 0.224904    \nSTATESC               -0.390894   0.077278   -5.058 4.23e-07 ***\nSTATESD               -0.054043   0.095118   -0.568 0.569921    \nSTATETN               -0.123576   0.075232   -1.643 0.100467    \nSTATETX               -0.162207   0.071500   -2.269 0.023291 *  \nSTATEUT               -0.013764   0.085049   -0.162 0.871437    \nSTATEVA               -0.105988   0.073744   -1.437 0.150647    \nSTATEVT                0.140322   0.092199    1.522 0.128021    \nSTATEWA               -0.079716   0.074540   -1.069 0.284874    \nSTATEWI               -0.111049   0.075464   -1.472 0.141140    \nSTATEWV               -0.236456   0.089077   -2.655 0.007942 ** \nSTATEWY               -0.142535   0.102901   -1.385 0.166004    \nACCT_PD               -0.202367   0.001557 -130.002  &lt; 2e-16 ***\n---\nSignif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1\n\n(Dispersion parameter for binomial family taken to be 1)\n\n    Null deviance: 370300  on 267169  degrees of freedom\nResidual deviance: 342199  on 267091  degrees of freedom\nAIC: 342357\n\nNumber of Fisher Scoring iterations: 7\n\nanova(model_org_category, test = \"Chisq\")\n\nAnalysis of Deviance Table\n\nModel: binomial, link: logit\n\nResponse: HighIncome\n\nTerms added sequentially (first to last)\n\n            Df Deviance Resid. Df Resid. Dev Pr(&gt;Chi)    \nNULL                       267169     370300             \nNTEE_major  27   9067.8    267142     361232   &lt;2e-16 ***\nGroupStatus  1      1.7    267141     361231   0.1978    \nSTATE       49    856.8    267092     360374   &lt;2e-16 ***\nACCT_PD      1  18175.3    267091     342199   &lt;2e-16 ***\n---\nSignif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1\n\nset.seed(123)\nindex &lt;- sample(1:nrow(tax2024), 0.8*nrow(tax2024))\ntrain &lt;- tax2024[index, ]\ntest  &lt;- tax2024[-index, ]\n\nmodel_test &lt;- glm(\n  HighIncome ~ NTEE_major + GroupStatus + STATE + ACCT_PD,\n  data = train,\n  family = binomial\n)\n\npred &lt;- ifelse(predict(model_test, test, type = \"response\") &gt; 0.5, \"High\", \"Low\")\ntable(pred, test$HighIncome)\n\n      \npred     Low  High\n  High  8547 16458\n  Low  17781 10648\n\nmean(pred == test$HighIncome)\n\n[1] 0.6407718\n\n\nrandom forest\n\nset.seed(456) \nmodel_rf &lt;- randomForest(\n  HighIncome ~ NTEE_major + GroupStatus + STATE + ACCT_PD,\n  data = train,\n  ntree = 200,        \n  importance = TRUE   \n)\n\n\npred_rf &lt;- predict(model_rf, test)\n\n\ntable(pred_rf, test$HighIncome)\n\n       \npred_rf   Low  High\n   Low  18736 12108\n   High  7592 14998\n\nmean(pred_rf == test$HighIncome)\n\n[1] 0.6313209\n\n\n•   Logistic Regression\n•   Decision Trees\n•   Random Forest\n•   KNN"
+  },
+  {
+    "objectID": "Final Project.html#question-2",
+    "href": "Final Project.html#question-2",
+    "title": "Final project",
+    "section": "Question 2",
+    "text": "Question 2\n\nTo what extent does geography (state-level location) influence whether a nonprofit is high-revenue?\nTest whether revenue patterns vary significantly by state and whether geography is a meaningful predictor after controlling for other factors.\n•   Logistic Regression\n•   Decision Tree\n•   Random Forest"
+  },
+  {
+    "objectID": "Final Project.html#question-3",
+    "href": "Final Project.html#question-3",
+    "title": "Final project",
+    "section": "Question 3",
+    "text": "Question 3\n\nDoes mission type (NTEE major group) significantly influence whether a nonprofit is high-revenue?\nFocus on how mission category (Arts, Education, Health, Human Services, Religion, etc.) contributes to financial performance.\n•   Logistic Regression\n•   Tree / Random Forest\n•   KNN (optional)"
+  },
+  {
+    "objectID": "Final Project.html#question-4",
+    "href": "Final Project.html#question-4",
+    "title": "Final project",
+    "section": "Question 4",
+    "text": "Question 4\n\nDo group-affiliated nonprofits differ from standalone nonprofits in their likelihood of being high-revenue?\nExamine whether belonging to a parent organization (group ruling) affects financial capacity\n•   Logistic Regression\n•   Decision Tree\n•   Random Forest&lt;br&gt;"
+  },
+  {
+    "objectID": "Final Project.html#question-5",
+    "href": "Final Project.html#question-5",
+    "title": "Final project",
+    "section": "Question 5",
+    "text": "Question 5\n\nCan a nonprofit’s mission type (NTEE major group) be predicted using its financial indicators and organizational attributes?\nFlip the previous questions: instead of predicting income from mission, predict mission from financial structure.\n•   Multinomial Logistic Regression\n•   Random Forest\n•   KNN"
+  },
+  {
+    "objectID": "Final Project.html#question-6",
+    "href": "Final Project.html#question-6",
+    "title": "Final project",
+    "section": "Question 6",
+    "text": "Question 6\n\nAre organizational characteristics able to predict whether a nonprofit has a high asset-to-revenue ratio?\nLook at financial efficiency or stability instead of raw income.\nSame classification models."
+  },
+  {
+    "objectID": "Final Project.html#key-findings",
+    "href": "Final Project.html#key-findings",
+    "title": "Final project",
+    "section": "Key Findings",
+    "text": "Key Findings"
+  },
+  {
+    "objectID": "Final Project.html#future-scope",
+    "href": "Final Project.html#future-scope",
+    "title": "Final project",
+    "section": "Future Scope",
+    "text": "Future Scope"
+  },
+  {
+    "objectID": "Data set.html",
+    "href": "Data set.html",
+    "title": "Final project",
+    "section": "",
+    "text": "Variables\nDescriptions\n\n\n\n\nEIN\nEmployer Identification number\n\n\nName\nPrimary name\n\n\nICO\nIn care of Name\n\n\nStreet\nStreet address\n\n\nCity\nCity\n\n\nState\nState\n\n\nZip\nZip Code\n\n\nGroup\nGroup Exemption Number\n\n\nSubsection\nSubsection code\n\n\nAffiliation\nAffiliation Code\n\n\nClassification\nClass code\n\n\nRuling\nRuling Date\n\n\nDeductibility\nDeductibility code\n\n\nFoundation\nFoundation Code\n\n\nActivity\nActivity Code\n\n\nOrganization\nOrganization code\n\n\nStatus\nEO status code\n\n\nTax_period\nTax period\n\n\nAsset_CD\nAsset code\n\n\nIncome_cd\nIncome code\n\n\nFiling_req_CD\nFiling requirement code\n\n\nPf_Filing_req_CD\nPF filing requirement code\n\n\nACCT_PD\nAccounting period\n\n\nAsset_AMT\nAsset amount\n\n\nIncome_AMT\nIncome amount\n\n\nRevenue_AMT\nrevenue amount\n\n\nNTEE_CD\nNational Taxonomy of exempt Entities code\n\n\nSort_Name\nSort name"
+  },
+  {
+    "objectID": "Data set.html#data-set",
+    "href": "Data set.html#data-set",
+    "title": "Final project",
+    "section": "",
+    "text": "Variables\nDescriptions\n\n\n\n\nEIN\nEmployer Identification number\n\n\nName\nPrimary name\n\n\nICO\nIn care of Name\n\n\nStreet\nStreet address\n\n\nCity\nCity\n\n\nState\nState\n\n\nZip\nZip Code\n\n\nGroup\nGroup Exemption Number\n\n\nSubsection\nSubsection code\n\n\nAffiliation\nAffiliation Code\n\n\nClassification\nClass code\n\n\nRuling\nRuling Date\n\n\nDeductibility\nDeductibility code\n\n\nFoundation\nFoundation Code\n\n\nActivity\nActivity Code\n\n\nOrganization\nOrganization code\n\n\nStatus\nEO status code\n\n\nTax_period\nTax period\n\n\nAsset_CD\nAsset code\n\n\nIncome_cd\nIncome code\n\n\nFiling_req_CD\nFiling requirement code\n\n\nPf_Filing_req_CD\nPF filing requirement code\n\n\nACCT_PD\nAccounting period\n\n\nAsset_AMT\nAsset amount\n\n\nIncome_AMT\nIncome amount\n\n\nRevenue_AMT\nrevenue amount\n\n\nNTEE_CD\nNational Taxonomy of exempt Entities code\n\n\nSort_Name\nSort name"
   }
 ]
