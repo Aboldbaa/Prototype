@@ -2,35 +2,142 @@
 title: "Code Page"
 editor: visual
 ---
-
+Cleaning data set
 ```{r}
 #| eval: false
-
 library(tidyverse)
 library(ggplot2)
 library(scales)
 library(dplyr)
 library(tidyr)
+library(broom)
+library(randomForest)
+tax2024 <- read.csv("tax2024.csv", stringsAsFactors = FALSE, na.strings = c("", "NA"))
+num_cols <- c("ASSET_AMT", "INCOME_AMT", "REVENUE_AMT")
+
+tax2024[num_cols] <- lapply(tax2024[num_cols], function(x) as.numeric(x))
+tax2024 <- tax2024 %>%
+  filter(!is.na(INCOME_AMT),
+         INCOME_AMT > 0,
+         !is.na(NTEE_CD),
+         NTEE_CD != "")
+tax2024  <- tax2024 %>% filter(REVENUE_AMT > 0)
+tax2024  <- tax2024  %>% filter(INCOME_AMT > 0)
 
 
 ```
-
+log regression, train/test, anova and confusion matrix
 ```{r}
 #| eval: false
+model_columns <- c("GroupStatus", "STATE", "ACCT_PD")
 
+tax2024_clean <- na.omit(tax2024[ , model_columns])
+tax2024$HighIncome <- factor(tax2024$HighIncome, levels = c("Low", "High"))
+
+
+tax2024$NTEE_major <- substr(tax2024$NTEE_CD, 1, 1)
+
+
+tax2024$GroupStatus <- factor(tax2024$GroupStatus)
+
+model_org_category <- glm(
+  HighIncome ~ NTEE_major + GroupStatus + STATE + ACCT_PD+ ASSET_AMT+ REVENUE_AMT,
+  data = tax2024,
+  family = binomial
+)
+
+anova(model_org_category, test = "Chisq")
+set.seed(123)
+index <- sample(1:nrow(tax2024), 0.8*nrow(tax2024))
+train <- tax2024[index, ]
+test  <- tax2024[-index, ]
+
+model_test <- glm(
+  HighIncome ~ NTEE_major + GroupStatus + STATE + ACCT_PD+ ASSET_AMT+ REVENUE_AMT,
+  data = train,
+  family = binomial
+)
+
+pred <- ifelse(predict(model_test, test, type = "response") > 0.5, "High", "Low")
+table(pred, test$HighIncome)
+mean(pred == test$HighIncome)
 
 
 ```
-
+Random fores, confusion matrix and variable importance.
 ```{r}
 #| eval: false
+set.seed(456) 
+model_rf <- randomForest(
+  HighIncome ~ NTEE_major + GroupStatus + STATE + ACCT_PD+ ASSET_AMT+ REVENUE_AMT,
+  data = train,
+  ntree = 200,        
+  importance = TRUE   
+)
 
+
+pred_rf <- predict(model_rf, test)
+
+
+table(pred_rf, test$HighIncome)
+mean(pred_rf == test$HighIncome)
+importance_data <- importance(model_rf)
+print(importance_data)
+
+
+varImpPlot(model_rf, 
+           sort = TRUE, 
+           main = "Random Forest Variable Importance",
+           n.var = 4 
+           )
 
 ```
-
+Probability calculation for state with most even odds of High revenue.log regression and coefficients states compared to MT
 ```{r}
 #| eval: false
 
+tax2024$STATE <- trimws(tax2024$STATE)        
+tax2024$STATE <- toupper(tax2024$STATE)       
+tax2024$STATE[tax2024$STATE == "" | is.na(tax2024$STATE)] <- "UNKNOWN"
+
+
+median_revenue <- median(tax2024$REVENUE_AMT, na.rm = TRUE)
+tax2024$HighRevenue <- ifelse(
+  tax2024$REVENUE_AMT >= median_revenue,
+  1,
+  0
+)
+
+
+overall_p <- mean(tax2024$HighRevenue)
+
+state_probs <- tax2024 %>%
+  group_by(STATE) %>%
+  summarise(p_HighRevenue = mean(HighRevenue)) %>%
+  ungroup()
+
+state_probs <- state_probs %>%
+  mutate(Difference = abs(p_HighRevenue - overall_p))
+
+
+typical_state_info <- state_probs %>%
+  arrange(Difference) %>%
+  head(1)
+
+
+typical_state <- typical_state_info$STATE
+
+
+print(typical_state)
+
+tax2024$STATE <- factor(tax2024$STATE)
+tax2024$STATE <- relevel(tax2024$STATE, ref = typical_state)
+
+
+model_typical_ref <- glm(formula = HighRevenue ~ STATE,
+                         family = binomial,
+                         data = tax2024)
+exp(coef(model_typical_ref))
 
 
 ```
