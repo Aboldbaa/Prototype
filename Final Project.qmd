@@ -13,7 +13,7 @@ library(scales)
 library(dplyr)
 library(tidyr)
 library(randomForest)
-tax2024 <- read.csv("tax.2024.csv", stringsAsFactors = FALSE, na.strings = c("", "NA"))
+tax2024 <- read.csv("tax2024.csv", stringsAsFactors = FALSE, na.strings = c("", "NA"))
 num_cols <- c("ASSET_AMT", "INCOME_AMT", "REVENUE_AMT")
 
 tax2024[num_cols] <- lapply(tax2024[num_cols], function(x) as.numeric(x))
@@ -37,23 +37,24 @@ str(tax2024)
 
 To determine how factors such as mission type (NTEE major group), organizational structure (group-affiliated vs standalone), geography (state), financial attributes (assets, revenue), and fiscal year-end month contribute to predicting whether a nonprofit has income above the median for the year 2024.
 
-Logistic regression
-
 ```{r}
+model_columns <- c("GroupStatus", "STATE", "ACCT_PD")
+
+tax2024_clean <- na.omit(tax2024[ , model_columns])
 tax2024$HighIncome <- factor(tax2024$HighIncome, levels = c("Low", "High"))
 
-# Create NTEE major group (first letter)
+
 tax2024$NTEE_major <- substr(tax2024$NTEE_CD, 1, 1)
 
 
 tax2024$GroupStatus <- factor(tax2024$GroupStatus)
 tax2024$STATE <- factor(tax2024$STATE)
 model_org_category <- glm(
-  HighIncome ~ NTEE_major + GroupStatus + STATE + ACCT_PD,
+  HighIncome ~ NTEE_major + GroupStatus + STATE + ACCT_PD+ ASSET_AMT+ REVENUE_AMT,
   data = tax2024,
   family = binomial
 )
-summary(model_org_category)
+
 anova(model_org_category, test = "Chisq")
 set.seed(123)
 index <- sample(1:nrow(tax2024), 0.8*nrow(tax2024))
@@ -61,7 +62,7 @@ train <- tax2024[index, ]
 test  <- tax2024[-index, ]
 
 model_test <- glm(
-  HighIncome ~ NTEE_major + GroupStatus + STATE + ACCT_PD,
+  HighIncome ~ NTEE_major + GroupStatus + STATE + ACCT_PD+ ASSET_AMT+ REVENUE_AMT,
   data = train,
   family = binomial
 )
@@ -76,7 +77,7 @@ random forest
 ```{r}
 set.seed(456) 
 model_rf <- randomForest(
-  HighIncome ~ NTEE_major + GroupStatus + STATE + ACCT_PD,
+  HighIncome ~ NTEE_major + GroupStatus + STATE + ACCT_PD+ ASSET_AMT+ REVENUE_AMT,
   data = train,
   ntree = 200,        
   importance = TRUE   
@@ -88,13 +89,15 @@ pred_rf <- predict(model_rf, test)
 
 table(pred_rf, test$HighIncome)
 mean(pred_rf == test$HighIncome)
-```
+importance_data <- importance(model_rf)
+print(importance_data)
 
-```         
-•   Logistic Regression
-•   Decision Trees
-•   Random Forest
-•   KNN
+
+varImpPlot(model_rf, 
+           sort = TRUE, 
+           main = "Random Forest Variable Importance",
+           n.var = 4 
+           )
 ```
 
 <br>
@@ -104,6 +107,55 @@ mean(pred_rf == test$HighIncome)
 #### To what extent does geography (state-level location) influence whether a nonprofit is high-revenue?
 
 Test whether revenue patterns vary significantly by state and whether geography is a meaningful predictor after controlling for other factors.
+
+```{r}
+
+median_revenue <- median(tax2024$REVENUE_AMT, na.rm = TRUE)
+tax2024$HighRevenue <- ifelse(
+  tax2024$REVENUE_AMT >= median_revenue,
+  1,
+  0
+)
+
+
+overall_p <- mean(tax2024$HighRevenue)
+
+state_probs <- tax2024 %>%
+  group_by(STATE) %>%
+  summarise(p_HighRevenue = mean(HighRevenue)) %>%
+  ungroup()
+
+state_probs <- state_probs %>%
+  mutate(Difference = abs(p_HighRevenue - overall_p))
+
+
+typical_state_info <- state_probs %>%
+  arrange(Difference) %>%
+  head(1)
+
+
+typical_state <- typical_state_info$STATE
+
+tax2024$STATE <- as.factor(tax2024$STATE)
+tax2024$STATE <- relevel(tax2024$STATE, ref = typical_state)
+
+model_typical_ref <- glm(formula = HighRevenue ~ STATE,
+                         family = binomial,
+                         data = tax2024)
+
+
+summary(model_typical_ref)
+exp(coef(model_typical_ref))
+levels(tax2024$STATE)
+
+```
+
+```         
+```
+
+**Yes, geography influences high-revenue status, but not uniformly.**
+
+The influence is not a massive driver of high-revenue status overall (modest deviance reduction).The influence is highly localized, with some states **significantly exceeding the average (VT, ME, NC, etc.)** and others **significantly falling below the average (NJ, SC, MA)**. The majority of states are statistically indistinguishable from the average state (Montana)
 
 ```         
 •   Logistic Regression
