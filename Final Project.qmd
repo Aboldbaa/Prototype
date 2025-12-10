@@ -48,7 +48,7 @@ tax2024$NTEE_major <- substr(tax2024$NTEE_CD, 1, 1)
 
 
 tax2024$GroupStatus <- factor(tax2024$GroupStatus)
-tax2024$STATE <- factor(tax2024$STATE)
+
 model_org_category <- glm(
   HighIncome ~ NTEE_major + GroupStatus + STATE + ACCT_PD+ ASSET_AMT+ REVENUE_AMT,
   data = tax2024,
@@ -109,6 +109,10 @@ varImpPlot(model_rf,
 Test whether revenue patterns vary significantly by state and whether geography is a meaningful predictor after controlling for other factors.
 
 ```{r}
+tax2024$STATE <- trimws(tax2024$STATE)        
+tax2024$STATE <- toupper(tax2024$STATE)       
+tax2024$STATE[tax2024$STATE == "" | is.na(tax2024$STATE)] <- "UNKNOWN"
+
 
 median_revenue <- median(tax2024$REVENUE_AMT, na.rm = TRUE)
 tax2024$HighRevenue <- ifelse(
@@ -136,8 +140,12 @@ typical_state_info <- state_probs %>%
 
 typical_state <- typical_state_info$STATE
 
-tax2024$STATE <- as.factor(tax2024$STATE)
+
+print(typical_state)
+
+tax2024$STATE <- factor(tax2024$STATE)
 tax2024$STATE <- relevel(tax2024$STATE, ref = typical_state)
+
 
 model_typical_ref <- glm(formula = HighRevenue ~ STATE,
                          family = binomial,
